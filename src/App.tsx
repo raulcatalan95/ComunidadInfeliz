@@ -26,13 +26,15 @@ function App() {
     setIsModalOpen(false);
   };
 
+  const isProd: boolean = window.location.hostname !== 'localhost';
+
 
   return (
     <>
        <nav>
           <div className="nav-container">
             <div className="nav-title">
-              <img src="../public/logoComunidadInfeliz.png" alt="" className='nav-logo'/>
+              <img src={isProd ? "/logoComunidadInfeliz.png" : "../public/logoComunidadInfeliz.png"} alt="" className='nav-logo'/>
               Comunidad Infeliz
             </div>
             <button className={`hamburger d-md-none`} onClick={(): void => setShowMenu(!showMenu)}>☰</button>
