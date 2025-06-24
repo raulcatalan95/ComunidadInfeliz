@@ -1,12 +1,16 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import ModalPago from './components/ModalPago/ModalPago'
 import './App.css'
 
 function App() {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  interface ProductInfo {
+    name: string;
+    description: string;
+    price: number;
+  }
 
   const product: ProductInfo = {
     name: 'Pago en Comunidad Infeliz',
@@ -41,7 +45,9 @@ function App() {
           </div>
       </nav>
 
+              {
 
+              }
                 <div className="payment-container">
 
                     <div className="payment-card">
