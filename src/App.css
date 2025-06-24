@@ -25,6 +25,9 @@
     .nav-title {
       font-size: 1.5rem;
       font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .nav-links {
@@ -41,6 +44,11 @@
 
     .nav-links a:hover {
       text-decoration: underline;
+    }
+
+    .nav-logo {
+      height: 36px;
+      width: 36px;
     }
 
     .hamburger {

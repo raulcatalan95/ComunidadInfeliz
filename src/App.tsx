@@ -31,7 +31,10 @@ function App() {
     <>
        <nav>
           <div className="nav-container">
-            <div className="nav-title">Comunidad Infeliz</div>
+            <div className="nav-title">
+              <img src="../public/logoComunidadInfeliz.png" alt="" className='nav-logo'/>
+              Comunidad Infeliz
+            </div>
             <button className={`hamburger d-md-none`} onClick={(): void => setShowMenu(!showMenu)}>☰</button>
             <div className="nav-links desktop-menu">
               <a href="#">Home</a>
