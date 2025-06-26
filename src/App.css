@@ -1,11 +1,8 @@
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    @import "tailwindcss";
 
     body {
       font-family: sans-serif;
+      margin: 0;
     }
 
     nav {
@@ -28,6 +25,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
+    }
+
+    .nav-title img {
+      border-radius: 10px;
     }
 
     .nav-links {
@@ -68,17 +69,12 @@
     }
 
     @media (min-width: 768px) {
-      .hamburger {
-      }
 
       .nav-links {
         display: flex;
         flex-direction: row;
         gap: 1.5rem;
         padding-top: 0;
-      }
-
-      .mobile-menu {
       }
 
       .d-md-none {
@@ -383,6 +379,10 @@
             0% { opacity: 1; }
             50% { opacity: 0.7; }
             100% { opacity: 1; }
+        }
+
+        .bg-primary {
+          background: linear-gradient(135deg, #039665 0%, #036949 100%);
         }
 
         @media (max-width: 480px) {

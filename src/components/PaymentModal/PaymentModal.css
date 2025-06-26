@@ -340,3 +340,9 @@
   padding-top: 0.25rem;
   margin-top: 0.25rem;
 }
+
+.logo-pago {
+  width: 96px;
+  height: 96px;
+  border-radius: 10px;
+}
