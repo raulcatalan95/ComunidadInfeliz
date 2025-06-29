@@ -1,6 +1,7 @@
 // PaymentModal.tsx
 import React, { useState, useEffect } from 'react';
 import './PaymentModal.css';
+import { putPaymentExpense } from '../../ApiRepository/ApiRepository';
 
 interface PaymentData {
   cardNumber: string;
@@ -13,17 +14,19 @@ interface ProductInfo {
   name: string;
   description: string;
   price: number;
+  idCommonExpense: number;
 }
 
 type PaymentStep = 1 | 2 | 3 | 4;
 
 interface PaymentModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (currentStep: number) => void;
   product: ProductInfo;
+  toClp: (number: number) => string;
 }
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, toClp }) => {
   const [currentStep, setCurrentStep] = useState<PaymentStep>(1);
   const [paymentData, setPaymentData] = useState<PaymentData>({
     cardNumber: '',
@@ -49,7 +52,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product })
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        onClose();
+        onClose(currentStep);
       }
     };
 
@@ -106,16 +109,26 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product })
     // Show processing step
     setCurrentStep(3);
 
+    putPaymentExpense(product.idCommonExpense, 'Pagado')
+      .then(() => {
+        setCurrentStep(4);
+      })
+      .catch(error => {
+        console.error('Error al procesar el pago:', error);
+        alert('Error al procesar el pago. Inténtalo de nuevo más tarde.');
+        setCurrentStep(1);
+      });
+
     // Simulate payment processing
-    setTimeout(() => {
-      setCurrentStep(4);
-    }, 3000);
+    // setTimeout(() => {
+    //   setCurrentStep(4);
+    // }, 3000);
   };
 
   // Handle overlay click
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      onClose(currentStep);
     }
   };
 
@@ -168,8 +181,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product })
             <p className="product-description">{product.description}</p>
             <div className="price-container">
               <div className="price-row">
-                <span className="price-label">Precio del curso:</span>
-                <span className="price-amount">${product.price}</span>
+                <span className="price-label">Monto a pagar:</span>
+                <span className="price-amount">{toClp(product.price)}</span>
               </div>
             </div>
             <button
@@ -273,14 +286,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product })
               </div>
               <div className="receipt-item">
                 <span>Precio:</span>
-                <span>${product.price}</span>
+                <span>{toClp(product.price)}</span>
               </div>
               <div className="receipt-item total">
                 <span>Total:</span>
-                <span>${product.price}</span>
+                <span>{toClp(product.price)}</span>
               </div>
             </div>
-            <button className="btn btn-primary btn-full" onClick={onClose}>
+            <button className="btn btn-primary btn-full" onClick={() => onClose(4)}>
               Continuar
             </button>
           </div>

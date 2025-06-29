@@ -12,3 +12,10 @@ export const authUser = (rut: string, clave: string): Promise<any> => {
 export const getPendingByDepartment = (departmentId: number): Promise<any> => {
   return axios.get(`${baseApi}/gasto-comun/pendientes-por-departamento/${departmentId}`);
 };
+
+export const putPaymentExpense = (idGasto: number, status: string): Promise<any> => {
+  return axios.put(`${baseApi}/gasto-comun/actualizar-estado`, {
+    idGasto: idGasto,
+    nuevoEstado: status
+  });
+};

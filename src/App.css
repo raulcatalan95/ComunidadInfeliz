@@ -189,6 +189,20 @@
             border-left: 4px solid #10b981;
         }
 
+        .payment-period.active {
+            border: 2px solid #10b981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .border-left-none {
+            border-left: none;
+        }
+
         .period-label {
             font-size: 12px;
             color: #6b7280;
@@ -256,9 +270,9 @@
             padding: 8px 0;
         }
 
-        .breakdown-item:not(:last-child) {
+        /* .breakdown-item:not(:last-child) {
             border-bottom: 1px solid #e5e7eb;
-        }
+        } */
 
         .breakdown-label {
             font-size: 14px;
