@@ -26,7 +26,7 @@ interface CommonsExpense {
 const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoader: (loading: boolean) => void }) => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [commonsExpenses, setCommonsExpenses] = useState<CommonsExpense | null>(null);
+  const [, setCommonsExpenses] = useState<CommonsExpense | null>(null);
   const [month, setMonth] = useState<string | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [total, setTotal] = useState<number>(0);
