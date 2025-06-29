@@ -311,7 +311,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
       <div className="modal-content">
         <div className="modal-header">
           <h2 className="modal-title">Proceso de Pago</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button className="close-btn" onClick={() => onClose(currentStep)}>
             &times;
           </button>
         </div>
