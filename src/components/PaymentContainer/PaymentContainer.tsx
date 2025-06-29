@@ -102,7 +102,6 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
   return (
 
     <div className="payment-container">
-
         <div className="payment-card">
             <div className="header">
                         <div className="user-info">
@@ -119,6 +118,11 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                 </div>
             </div>
             {
+                commonsExpenses && commonsExpenses.length > 1 && (
+                    <h3 className="text-gray-500 font-semibold mb-4">Selecciona el periodo a pagar: </h3>
+                )
+            }
+            { 
                 commonsExpenses && commonsExpenses.length > 0 ? (
                     commonsExpenses.map((expense: CommonsExpense) => {
                         return (
