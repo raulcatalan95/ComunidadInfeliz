@@ -1,9 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PaymentModal from "../PaymentModal/PaymentModal";
+import { getPendingByDepartment } from "../../ApiRepository/ApiRepository";
 
-const PaymentContainer = () => {
+interface User {
+  rut: string;
+  nombre: string;
+  correo: string;
+  departamentos: {
+    idDepartamento: number;
+    numero: string;
+    torre: string;
+    piso: number;
+  }[];
+}
+
+interface CommonsExpense {
+  idGasto: number;
+  monto: number;
+  descripcion: string;
+  mes: string;
+  anio: number;
+  estado: string;
+}[];
+
+const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoader: (loading: boolean) => void }) => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [commonsExpenses, setCommonsExpenses] = useState<CommonsExpense | null>(null);
+  const [month, setMonth] = useState<string | null>(null);
+  const [year, setYear] = useState<number | null>(null);
+  const [total, setTotal] = useState<number>(0);
+  const [product, setProduct] = useState<ProductInfo | null>(null);
+
 
   interface ProductInfo {
     name: string;
@@ -11,11 +39,13 @@ const PaymentContainer = () => {
     price: number;
   }
 
-  const product: ProductInfo = {
-    name: 'Pago en Comunidad Infeliz',
-    description: 'Pago Rapido',
-    price: 239.411
-  };
+  interface ToClp {
+    (number: number): string;
+  }
+
+  const toClp: ToClp = (number) =>
+    number.toLocaleString("es-CL", { style: "currency", currency: "CLP" });
+
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -25,6 +55,29 @@ const PaymentContainer = () => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    if (user) {
+      setIsLoader(true);
+      getPendingByDepartment(user.departamentos[0].idDepartamento)
+        .then(response => {
+          setMonth(response.data[response.data.length - 1].mes);
+          setYear(response.data[response.data.length - 1].anio);
+          setTotal(response.data[response.data.length - 1].monto);
+          setCommonsExpenses(response.data);
+          setProduct({
+            name: `Pago ${response.data[response.data.length - 1].mes} ${response.data[response.data.length - 1].anio}`,
+            description: 'Pago de gastos comunes',
+            price: response.data[response.data.length - 1].monto,
+          });
+        })
+        .catch(error => {
+          console.error('Error al obtener pendientes:', error);
+        }).finally(() => {
+          setIsLoader(false);
+        });
+    }
+  }, []);
+
   return (
 
     <div className="payment-container">
@@ -33,7 +86,7 @@ const PaymentContainer = () => {
             <div className="header">
                 <div className="user-info">
                     <div className="username">
-                        Depto129
+                        {user ? `Dpto ${user.departamentos[0].numero}` : 'Invitado'}
                         {/* <div className="dropdown-arrow"></div> */}
                     </div>
                     <div className="community">Comunidad Infeliz</div>
@@ -47,14 +100,14 @@ const PaymentContainer = () => {
 
             <div className="payment-period">
                 <div className="period-label">Período de Pago</div>
-                <div className="period-date">Junio 2025 - Cuota de Administración</div>
+                <div className="period-date">{month} {year} - Cuota de Administración</div>
             </div>
 
             <div className="payment-content">
                 <div className="payment-info">
                     <div className="total-label">Tu total a pagar es de</div>
                     <div className="total-amount">
-                        <span className="currency">$</span> 239.411
+                        <span className="currency"></span> {toClp(total)}
                     </div>
                     {/* <div className="additional-fee">+ $ 6.662 con pago en línea</div> */}
                 </div>
@@ -62,15 +115,15 @@ const PaymentContainer = () => {
                 <div className="payment-breakdown">
                     <div className="breakdown-item">
                         <span className="breakdown-label">Cuota base de administración</span>
-                        <span className="breakdown-amount">$ 239.411</span>
+                        <span className="breakdown-amount">{toClp(total)}</span>
                     </div>
-                    <div className="breakdown-item">
+                    {/* <div className="breakdown-item">
                         <span className="breakdown-label">Comisión pago en línea (2.7%)</span>
                         <span className="breakdown-amount">$ 6.662</span>
-                    </div>
+                    </div> */}
                     <div className="breakdown-item breakdown-total">
                         <span className="breakdown-label">Total a pagar</span>
-                        <span className="breakdown-amount">$ 246.073</span>
+                        <span className="breakdown-amount">{toClp(total)}</span>
                     </div>
                 </div>
 

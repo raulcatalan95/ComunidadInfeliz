@@ -8,14 +8,24 @@ import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import './App.css'
 import 'remixicon/fonts/remixicon.css';
 import Home from './components/Home/Home';
+import Loader from './components/ui/Loader/Loader';
 
 interface User {
-  email: string;
+  rut: string;
+  nombre: string;
+  correo: string;
+  departamentos: {
+    idDepartamento: number;
+    numero: string;
+    torre: string;
+    piso: number;
+  }[];
 }
 
 function App() {
 
   const [user, setUser] = useState<User | null>(sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') as string) : null);
+  const [isLoader, setIsLoader] = useState<boolean>(false);
 
   const handleLogin = (userData: User | null): void => {
       setUser(userData);
@@ -32,6 +42,9 @@ function App() {
 
   return (
     <>
+    {
+      isLoader && <Loader />
+    }
       <BrowserRouter>
         {
             <>
@@ -41,10 +54,10 @@ function App() {
                 <Route element={<ProtectedRoutes canActivate={!!user} redirectPath={'/login'}/>} >
                   <Route path={'/'} element={<Home user={user} />}></Route>
                   <Route path={'/billetera-virtual'} element={<VirtualWalletContainer/>}></Route>
-                  <Route path={'/pagar-ggcc'} element={<PaymentContainer />}></Route>
+                  <Route path={'/pagar-ggcc'} element={<PaymentContainer user={user} setIsLoader={setIsLoader} />}></Route>
                 </Route>
                 <Route element={<ProtectedRoutes canActivate={!user} redirectPath={'/'} />} >
-                  <Route path={'/login'} element={<Login onLogin={handleLogin} />}></Route>
+                  <Route path={'/login'} element={<Login onLogin={handleLogin} setIsLoader={setIsLoader} />}></Route>
                 </Route>
               </Routes>
             </>

@@ -1,16 +1,26 @@
 import { useState } from "react";
+import { authUser } from "../../ApiRepository/ApiRepository";
 
 interface User {
-  email: string;
+  rut: string;
+  nombre: string;
+  correo: string;
+  departamentos: {
+    idDepartamento: number;
+    numero: string;
+    torre: string;
+    piso: number;
+  }[];
 }
 
 interface Props {
   onLogin: (user: User) => void;
+  setIsLoader: (isLoading: boolean) => void;
 };
 
-const Login = ({ onLogin }: Props) => {
+const Login = ({ onLogin, setIsLoader }: Props) => {
 
-    const [email, setEmail] = useState<string>('');
+    const [rut, setRut] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string>('');
 
@@ -19,13 +29,26 @@ const Login = ({ onLogin }: Props) => {
      * @param {React.FormEvent} e - Evento de formulario
      */
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+        setIsLoader(true);
         e.preventDefault();
-        if (!email || !password) {
-            setError('Por favor ingrese email y contraseña');
+        if (!rut || !password) {
+            setError('Por favor ingrese Rut y contraseña');
             return;
         }
-        // Simulación de login exitoso
-       onLogin({ email });
+
+        authUser(rut, password)
+            .then(response => {
+                if (response.data) {
+                    // Simulación de login exitoso
+                    console.log('Login exitoso:', response);
+                    onLogin(response.data);
+                }
+            }).catch(error => {
+                console.error('Error al autenticar:', error);
+                setError('Rut o contraseña incorrectos');
+            }).finally(() => {
+                setIsLoader(false);
+            });
     };
 
     return (
@@ -43,17 +66,17 @@ const Login = ({ onLogin }: Props) => {
                     <input type="hidden" name="remember" value="true" />
                     <div className="rounded-md -space-y-px">
                         <div className="mb-4">
-                            <label htmlFor="email" className="sr-only">Correo electrónico</label>
+                            <label htmlFor="rut" className="sr-only">RUT</label>
                             <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
+                                id="rut"
+                                name="rut"
+                                type="text"
+                                autoComplete="username"
                                 required
                                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Correo electrónico"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="RUT"
+                                value={rut}
+                                onChange={(e) => setRut(e.target.value)}
                             />
                         </div>
                         <div>

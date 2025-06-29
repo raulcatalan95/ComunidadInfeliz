@@ -1,7 +1,15 @@
 import CardHome from "../CardHome/CardHome";
 
 interface User {
-    email: string;
+  rut: string;
+  nombre: string;
+  correo: string;
+  departamentos: {
+    idDepartamento: number;
+    numero: string;
+    torre: string;
+    piso: number;
+  }[];
 }
 
 interface HomeProps {
@@ -18,7 +26,7 @@ const Home = ({ user }: HomeProps) => {
                     <div className="header">
                         <div className="user-info">
                             <div className="username">
-                                Depto129
+                               Dpto {user ? user.departamentos[0].numero : 'Invitado'}
                                 {/* <div className="dropdown-arrow"></div> */}
                             </div>
                             <div className="community">Comunidad Infeliz</div>
@@ -31,7 +39,7 @@ const Home = ({ user }: HomeProps) => {
                     </div>
                     <div className="payment-period rounded-lg shadow-md p-6 mb-6">
                         <h2 className="text-2xl font-bold text-gray-900">
-                            Bienvenido, {user ? user.email.split('@')[0] : 'Invitado'}
+                            Bienvenido, {user ? user.nombre : 'Invitado'}
                         </h2>
                         <p className="text-gray-500 mt-1">Accede rápidamente a nuestros servicios</p>
                     </div>
