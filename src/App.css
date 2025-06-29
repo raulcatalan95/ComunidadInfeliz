@@ -191,7 +191,7 @@
 
         .payment-period.active {
             border: 2px solid #10b981;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 2px 8px #10b981;
             border-radius: 8px;
         }
 
