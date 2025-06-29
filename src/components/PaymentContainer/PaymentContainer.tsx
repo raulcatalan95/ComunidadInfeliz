@@ -151,11 +151,13 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
             </div>
         </div>
 
-        <PaymentModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            product={product}
-        />
+        {product && (
+            <PaymentModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                product={product}
+            />
+        )}
     </div>
 
   )
