@@ -31,12 +31,7 @@ const VirtualWallet = ({ user, setIsLoader }: { user: User | null, setIsLoader: 
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [commonsExpenses, setCommonsExpenses] = useState<CommonsExpense | null>(null);
-    const [month, setMonth] = useState<string | null>(null);
-    const [year, setYear] = useState<number | null>(null);
-    const [total, setTotal] = useState<number>(0);
     const [product, setProduct] = useState<ProductInfo | null>(null);
-    const [totalAmount, setTotalAmount] = useState<number>(0);
-    const [expenseSelected, setExpenseSelected] = useState<CommonsExpense | null>(null);
 
       interface ProductInfo {
         name: string;
