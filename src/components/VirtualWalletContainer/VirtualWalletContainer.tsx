@@ -72,10 +72,6 @@ const VirtualWallet = ({ user, setIsLoader }: { user: User | null, setIsLoader: 
                 }
                 const lastExpense = response.data[response.data.length - 1];
     
-                setMonth(lastExpense.mes);
-                setYear(lastExpense.anio);
-                setTotal(lastExpense.monto);
-                setExpenseSelected(lastExpense);
                 setCommonsExpenses(response.data);
                 setProduct({
                     name: `Pago ${lastExpense.mes} ${lastExpense.anio}`,
@@ -83,8 +79,7 @@ const VirtualWallet = ({ user, setIsLoader }: { user: User | null, setIsLoader: 
                     price: lastExpense.monto,
                     idCommonExpense: lastExpense.idGasto,
                 });
-                const totalAmount: number = response.data.reduce((acc: number, expense: CommonsExpense) => acc + expense.monto, 0);
-                setTotalAmount(totalAmount);
+                
             })
             .catch(error => {
               console.error('Error al obtener pendientes:', error);
