@@ -123,7 +123,7 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                 )
             }
             { 
-                commonsExpenses && commonsExpenses.length > 0 ? (
+                commonsExpenses && commonsExpenses.length > 0 && (
                     commonsExpenses.map((expense: CommonsExpense) => {
                         return (
                             <div
@@ -149,7 +149,10 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                             </div>
                         )
                     })
-                ) : (
+                )}
+                {
+                commonsExpenses && commonsExpenses.length === 0 &&
+                (
                     <div className="no-expenses flex flex-col items-center justify-center">
                         <div className="success-icon">
                             <svg fill="currentColor" viewBox="0 0 20 20">
@@ -161,7 +164,8 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                 )}
             
                 {
-                commonsExpenses &&  (
+                commonsExpenses &&  
+                (
                     <>
                     
                     <div className="payment-content">
