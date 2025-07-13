@@ -14,7 +14,7 @@ interface ProductInfo {
 }
 
 const VirtualWallet = () => {
-    const [balance, setBalance] = useState(25000);
+    const [balance, setBalance] = useState(200000);
     const [amount, setAmount] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
