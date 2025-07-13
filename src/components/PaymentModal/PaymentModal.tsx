@@ -24,9 +24,10 @@ interface PaymentModalProps {
   onClose: (currentStep: number) => void;
   product: ProductInfo;
   toClp: (number: number) => string;
+  typeModal: 'payment' | 'wallet';
 }
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, toClp }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, toClp, typeModal }) => {
   const [currentStep, setCurrentStep] = useState<PaymentStep>(1);
   const [paymentData, setPaymentData] = useState<PaymentData>({
     cardNumber: '',
@@ -34,6 +35,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
     cvv: '',
     cardName: ''
   });
+  const [ walletSaldo ] = useState<number>(200000);
 
   // Reset modal state when opened
   useEffect(() => {
@@ -99,30 +101,36 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { cardNumber, expiryDate, cvv, cardName } = paymentData;
-
-    if (!cardNumber || !expiryDate || !cvv || !cardName) {
-      alert('Por favor completa todos los campos');
-      return;
+    if (typeModal === 'payment') {
+      
+    // Show processing step
+      setCurrentStep(3);
+      putPaymentExpense(product.idCommonExpense, 'Pagado')
+        .then(() => {
+          setCurrentStep(4);
+        })
+        .catch(error => {
+          console.error('Error al procesar el pago:', error);
+          alert('Error al procesar el pago. Inténtalo de nuevo más tarde.');
+          setCurrentStep(1);
+        });
     }
 
-    // Show processing step
-    setCurrentStep(3);
+    if (typeModal === 'wallet') {
+      const { cardNumber, expiryDate, cvv, cardName } = paymentData;
 
-    putPaymentExpense(product.idCommonExpense, 'Pagado')
-      .then(() => {
+      if (!cardNumber || !expiryDate || !cvv || !cardName) {
+        alert('Por favor completa todos los campos');
+        return;
+      }
+      setCurrentStep(3);
+      console.log('Procesando pago en billetera virtual...');
+      // Simulate payment processing
+      setTimeout(() => {
         setCurrentStep(4);
-      })
-      .catch(error => {
-        console.error('Error al procesar el pago:', error);
-        alert('Error al procesar el pago. Inténtalo de nuevo más tarde.');
-        setCurrentStep(1);
-      });
+      }, 2000);
+    }
 
-    // Simulate payment processing
-    // setTimeout(() => {
-    //   setCurrentStep(4);
-    // }, 3000);
   };
 
   // Handle overlay click
@@ -181,7 +189,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
             <p className="product-description">{product.description}</p>
             <div className="price-container">
               <div className="price-row">
-                <span className="price-label">Monto a pagar:</span>
+                <span className="price-label">Monto a {typeModal === 'payment' ? 'pagar' : 'cargar'}:</span>
                 <span className="price-amount">{toClp(product.price)}</span>
               </div>
             </div>
@@ -197,7 +205,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
       case 2:
         return (
           <div className="step-content">
-            <form className="payment-form" onSubmit={handleSubmit}>
+            { typeModal === 'wallet' ?
+            (<form className="payment-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <label className="form-label">Número de Tarjeta</label>
                 <input
@@ -253,10 +262,46 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
                   Volver
                 </button>
                 <button type="submit" className="btn btn-success">
-                  Procesar Pago
+                  Procesar Carga
                 </button>
               </div>
-            </form>
+            </form>)
+            :
+            (<>
+            <form onSubmit={handleSubmit}>
+              <div className={`bg-primary no-underline rounded-xl shadow-lg p-6 flex flex-col items-center`}>
+                <div className="rounded-full bg-white p-3 mb-4">
+                    <i className={`ri-wallet-3-line text-2xl`}></i>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">Billetera Virtual</h3>
+                <p className="text-white text-sm text-center">Saldo: {toClp(walletSaldo)}</p>
+              </div>
+              {
+                walletSaldo < product.price && (
+                  <div className="alert alert-warning text-red-500">
+                    <i className="ri-alert-line"></i>
+                    <span>Saldo insuficiente para realizar el pago</span>
+                  </div>
+                )
+              }
+              <div className="form-buttons">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => goToStep(1)}
+                  >
+                    Volver
+                  </button>
+                  <button 
+                    type="submit"
+                    disabled={walletSaldo < product.price}
+                    className={`btn btn-success ${walletSaldo < product.price && 'cursor-not-allowed opacity-50 pointer-events-none'}`}>
+                    Procesar Pago
+                  </button>
+                </div>
+              </form>
+            </>)
+            }
           </div>
         );
 
@@ -278,16 +323,20 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
               </svg>
             </div>
             <h3 className="success-title">¡Pago Exitoso!</h3>
-            <p className="success-description">Tu compra se ha procesado correctamente</p>
+            <p className="success-description">Tu pago se ha procesado correctamente</p>
             <div className="receipt">
               <div className="receipt-item">
                 <span>Producto:</span>
                 <span>{product.name}</span>
               </div>
-              <div className="receipt-item">
-                <span>Precio:</span>
-                <span>{toClp(product.price)}</span>
-              </div>
+              {
+                typeModal === 'payment' && (
+                  <div className="receipt-item">
+                    <span>Precio:</span>
+                    <span>{toClp(product.price)}</span>
+                  </div>
+                )
+              }
               <div className="receipt-item total">
                 <span>Total:</span>
                 <span>{toClp(product.price)}</span>

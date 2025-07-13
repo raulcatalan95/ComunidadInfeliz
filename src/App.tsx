@@ -53,7 +53,7 @@ function App() {
               <Routes>
                 <Route element={<ProtectedRoutes canActivate={!!user} redirectPath={'/login'}/>} >
                   <Route path={'/'} element={<Home user={user} />}></Route>
-                  <Route path={'/billetera-virtual'} element={<VirtualWalletContainer user={user} setIsLoader={setIsLoader}/>}></Route>
+                  <Route path={'/billetera-virtual'} element={<VirtualWalletContainer />}></Route>
                   <Route path={'/pagar-ggcc'} element={<PaymentContainer user={user} setIsLoader={setIsLoader} />}></Route>
                 </Route>
                 <Route element={<ProtectedRoutes canActivate={!user} redirectPath={'/'} />} >

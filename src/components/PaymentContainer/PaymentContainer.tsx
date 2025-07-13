@@ -227,6 +227,7 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 product={product}
+                typeModal="payment"
             />
         ) : null}
     </div>

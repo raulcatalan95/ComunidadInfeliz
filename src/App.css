@@ -399,6 +399,29 @@
           background: linear-gradient(135deg, #039665 0%, #036949 100%);
         }
 
+        .text-wallet-green {
+            --tw-text-opacity: 1;
+            color: rgb(16 185 129 / var(--tw-text-opacity, 1));
+        }
+
+        .hover\:text-white:hover {
+            --tw-text-opacity: 1;
+            color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+        }
+
+        .hover\:bg-wallet-green:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(16 185 129 / var(--tw-bg-opacity, 1));
+        }
+
+        .duration-200 {
+            transition-duration: 200ms;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
         @media (max-width: 480px) {
             .payment-card {
                 padding: 24px;
