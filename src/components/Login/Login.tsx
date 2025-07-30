@@ -11,6 +11,7 @@ interface User {
     torre: string;
     piso: number;
   }[];
+    saldoBilletera: number;
 }
 
 interface Props {

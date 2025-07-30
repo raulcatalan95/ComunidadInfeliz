@@ -20,6 +20,7 @@ interface User {
     torre: string;
     piso: number;
   }[];
+  saldoBilletera: number;
 }
 
 function App() {
@@ -27,11 +28,9 @@ function App() {
   const [user, setUser] = useState<User | null>(sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') as string) : null);
   const [isLoader, setIsLoader] = useState<boolean>(false);
 
-  const handleLogin = (userData: User | null): void => {
+  const handleLogin = (userData: User): void => {
       setUser(userData);
-      if (userData) {
-        sessionStorage.setItem('user', JSON.stringify(userData));
-      }
+      sessionStorage.setItem('user', JSON.stringify(userData));
   };
   
   const handleLogout = () => {
@@ -53,7 +52,7 @@ function App() {
               <Routes>
                 <Route element={<ProtectedRoutes canActivate={!!user} redirectPath={'/login'}/>} >
                   <Route path={'/'} element={<Home user={user} />}></Route>
-                  <Route path={'/billetera-virtual'} element={<VirtualWalletContainer />}></Route>
+                  <Route path={'/billetera-virtual'} element={<VirtualWalletContainer user={user} />}></Route>
                   <Route path={'/pagar-ggcc'} element={<PaymentContainer user={user} setIsLoader={setIsLoader} />}></Route>
                 </Route>
                 <Route element={<ProtectedRoutes canActivate={!user} redirectPath={'/'} />} >

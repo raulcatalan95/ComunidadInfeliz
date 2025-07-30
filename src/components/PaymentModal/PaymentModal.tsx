@@ -1,7 +1,7 @@
 // PaymentModal.tsx
 import React, { useState, useEffect } from 'react';
 import './PaymentModal.css';
-import { putPaymentExpense } from '../../ApiRepository/ApiRepository';
+import { putPaymentExpense, postChargerWallet } from '../../ApiRepository/ApiRepository';
 
 interface PaymentData {
   cardNumber: string;
@@ -125,10 +125,19 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
       }
       setCurrentStep(3);
       console.log('Procesando pago en billetera virtual...');
-      // Simulate payment processing
-      setTimeout(() => {
-        setCurrentStep(4);
-      }, 2000);
+      const userStr = sessionStorage.getItem('user');
+      const userSession = userStr ? JSON.parse(userStr) : null;
+      console.log('Usuario:', userSession);
+      
+      if (userSession) {
+        postChargerWallet(userSession.rutUsuario, product.price)
+         .then((res) => {
+           setCurrentStep(4);
+           console.log('Carga de billetera exitosa:', res.data);
+           userSession.saldoBilletera = res.data;
+           sessionStorage.setItem('user', JSON.stringify(userSession));
+         });
+      }
     }
 
   };

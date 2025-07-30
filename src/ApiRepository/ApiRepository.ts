@@ -19,3 +19,10 @@ export const putPaymentExpense = (idGasto: number, status: string): Promise<any>
     nuevoEstado: status
   });
 };
+
+export const postChargerWallet = (rut: string, monto: number): Promise<any> => {
+  return axios.post(`${baseApi}/billetera-virtual/cargar-saldo`, {
+    rutUsuario: rut,
+    monto
+  });
+};

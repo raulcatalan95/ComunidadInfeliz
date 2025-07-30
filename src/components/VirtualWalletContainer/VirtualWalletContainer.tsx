@@ -13,10 +13,27 @@ interface ProductInfo {
   idCommonExpense: number;
 }
 
-const VirtualWallet = () => {
-    const [balance, setBalance] = useState(200000);
+interface User {
+  rut: string;
+  nombre: string;
+  correo: string;
+  departamentos: {
+    idDepartamento: number;
+    numero: string;
+    torre: string;
+    piso: number;
+  }[];
+  saldoBilletera: number;
+}
+
+interface VirtualWalletContainerProps {
+  user: User | null;
+}
+
+const VirtualWallet = ( {user}: VirtualWalletContainerProps ) => {
+    const [balance, setBalance] = useState(user ? user.saldoBilletera : 0);
     const [amount, setAmount] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [product, setProduct] = useState<ProductInfo | null>(null);
 
@@ -33,14 +50,6 @@ const VirtualWallet = () => {
             idCommonExpense: 0 // ID ficticio, no se usa en este caso
         });
         openModal();
-        
-        // setIsLoading(true);
-        // // Simular una transacción
-        setTimeout(() => {
-            setBalance(prev => prev + parseFloat(amount));
-            setAmount('');
-            setIsLoading(false);
-        }, 1000);
     };
 
     const openModal = () => {
@@ -48,10 +57,14 @@ const VirtualWallet = () => {
     };
 
     const closeModal = (currentStep: number) => {
+      const userStr = sessionStorage.getItem('user');
+      const userSession = userStr ? JSON.parse(userStr) : null;
       if (currentStep === 4) {
         window.location.reload();
         return;
       }
+      
+      setBalance(userSession ? userSession.saldoBilletera : user?.saldoBilletera);
       setIsModalOpen(false);
     };
 
@@ -71,12 +84,12 @@ const VirtualWallet = () => {
                         <div className="text-4xl font-bold text-wallet-green mb-4">
                             {toClp(balance)}
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        {/* <div className="w-full bg-gray-200 rounded-full h-2">
                             <div 
                                 className="bg-gradient-to-r from-wallet-green to-wallet-green-light h-2 rounded-full transition-all duration-500"
                                 style={{ width: `${Math.min((balance / 5000) * 100, 100)}%` }}
                             ></div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
