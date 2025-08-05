@@ -70,7 +70,21 @@ const VirtualWallet = ( {user}: VirtualWalletContainerProps ) => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-            <div className="max-w-md mx-auto">
+            <div className="max-w-xl mx-auto">
+                <div className="header">
+                        <div className="user-info">
+                            <div className="username">
+                               Dpto {user ? user.departamentos[0].numero : 'Invitado'}
+                                {/* <div className="dropdown-arrow"></div> */}
+                    </div>
+                    <div className="community">Comunidad Infeliz</div>
+                </div>
+                <div className="avatar">
+                    <svg className="avatar-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
+                </div>
+            </div>
                 {/* Header */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">Billetera Virtual</h1>

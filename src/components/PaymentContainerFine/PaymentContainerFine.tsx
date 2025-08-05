@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PaymentModal from "../PaymentModal/PaymentModal";
-import { getPendingByDepartment } from "../../ApiRepository/ApiRepository";
+import { getPendingFine } from "../../ApiRepository/ApiRepository";
 import type { JSX } from "react/jsx-runtime";
 
 interface User {
@@ -18,7 +18,7 @@ interface User {
 interface CommonsExpense {
   map(arg0: (expense: CommonsExpense) => JSX.Element): import("react").ReactNode;
   length: number;
-  idGasto: number;
+  idMulta: number;
   monto: number;
   descripcion: string;
   mes: string;
@@ -26,12 +26,10 @@ interface CommonsExpense {
   estado: string;
 }[];
 
-const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoader: (loading: boolean) => void }) => {
+const PaymentContainerFine = ({ user, setIsLoader }: { user: User | null, setIsLoader: (loading: boolean) => void }) => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [commonsExpenses, setCommonsExpenses] = useState<CommonsExpense | null>(null);
-  const [month, setMonth] = useState<string | null>(null);
-  const [year, setYear] = useState<number | null>(null);
   const [total, setTotal] = useState<number>(0);
   const [product, setProduct] = useState<ProductInfo | null>(null);
   const [totalAmount, setTotalAmount] = useState<number>(0);
@@ -68,7 +66,7 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
   useEffect(() => {
     if (user) {
       setIsLoader(true);
-      getPendingByDepartment(user.departamentos[0].idDepartamento)
+      getPendingFine()
         .then(response => {
             if (response.data.length === 0) {
                 setCommonsExpenses(null);
@@ -76,17 +74,14 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                 return;
             }
             const lastExpense = response.data[response.data.length - 1];
-
-            setMonth(lastExpense.mes);
-            setYear(lastExpense.anio);
             setTotal(lastExpense.monto);
             setExpenseSelected(lastExpense);
             setCommonsExpenses(response.data);
             setProduct({
-                name: `Pago ${lastExpense.mes} ${lastExpense.anio}`,
-                description: 'Pago de gastos comunes',
+                name: `Pago Multa`,
+                description: 'Pago de Multa',
                 price: lastExpense.monto,
-                idCommonExpense: lastExpense.idGasto,
+                idCommonExpense: lastExpense.idMulta,
             });
             const totalAmount: number = response.data.reduce((acc: number, expense: CommonsExpense) => acc + expense.monto, 0);
             setTotalAmount(totalAmount);
@@ -119,7 +114,7 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
             </div>
             {
                 commonsExpenses && commonsExpenses.length > 1 && (
-                    <h3 className="text-gray-500 font-semibold mb-4">Selecciona el periodo a pagar: </h3>
+                    <h3 className="text-gray-500 font-semibold mb-4">Selecciona la multa a pagar: </h3>
                 )
             }
             { 
@@ -127,24 +122,22 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                     commonsExpenses.map((expense: CommonsExpense) => {
                         return (
                             <div
-                                key={expense.idGasto}
-                                className={`payment-period border-left-none transition-transform duration-300 transform hover:scale-100 cursor-pointer hover:shadow-xl ${expense.idGasto === expenseSelected?.idGasto ? 'active' : ''}`}
+                                key={expense.idMulta}
+                                className={`payment-period border-left-none transition-transform duration-300 transform hover:scale-100 cursor-pointer hover:shadow-xl ${expense.idMulta === expenseSelected?.idMulta ? 'active' : ''}`}
                                 onClick={() => {
                                     // event.currentTarget.classList.toggle('active');
                                     setExpenseSelected(expense);
-                                    setMonth(expense.mes);
-                                    setYear(expense.anio);
                                     setTotal(expense.monto);
                                     setProduct({
                                         name: `Pago ${expense.mes} ${expense.anio}`,
                                         description: 'Pago de gastos comunes',
                                         price: expense.monto,
-                                        idCommonExpense: expense.idGasto,
+                                        idCommonExpense: expense.idMulta,
                                     });
                                 }}
 
                                 >
-                                <div className="period-label">Período de Pago {expense.mes} {expense.anio}</div>
+                                <div className="period-label">Multa</div>
                                 <div className="period-date">Total {toClp(expense.monto)}</div>
                             </div>
                         )
@@ -159,7 +152,7 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
                             </svg>
                         </div>
-                        No hay gastos comunes pendientes
+                        No hay multas pendientes
                     </div>
                 )}
             
@@ -181,7 +174,7 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
 
                         <div className="payment-breakdown">
                             <div className="breakdown-item">
-                                <span className="breakdown-label">Pagar cuota - {month} {year}</span>
+                                <span className="breakdown-label">Pagar multa</span>
                                 <span className="breakdown-amount">{toClp(total)}</span>
                             </div>
                             {/* <div className="breakdown-item">
@@ -227,7 +220,7 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 product={product}
-                typeModal="payment"
+                typeModal="paymentFine"
             />
         ) : null}
     </div>
@@ -235,4 +228,4 @@ const PaymentContainer = ({ user, setIsLoader }: { user: User | null, setIsLoade
   )
 }
 
-export default PaymentContainer
+export default PaymentContainerFine

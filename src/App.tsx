@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import PaymentContainer from './components/PaymentContainer/PaymentContainer';
+import PaymentContainerFine from './components/PaymentContainerFine/PaymentContainerFine';
 import VirtualWalletContainer from './components/VirtualWalletContainer/VirtualWalletContainer';
 import Login from './components/Login/Login';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
@@ -54,6 +55,7 @@ function App() {
                   <Route path={'/'} element={<Home user={user} />}></Route>
                   <Route path={'/billetera-virtual'} element={<VirtualWalletContainer user={user} />}></Route>
                   <Route path={'/pagar-ggcc'} element={<PaymentContainer user={user} setIsLoader={setIsLoader} />}></Route>
+                  <Route path={'/pagar-multa'} element={<PaymentContainerFine user={user} setIsLoader={setIsLoader} />}></Route>
                 </Route>
                 <Route element={<ProtectedRoutes canActivate={!user} redirectPath={'/'} />} >
                   <Route path={'/login'} element={<Login onLogin={handleLogin} setIsLoader={setIsLoader} />}></Route>

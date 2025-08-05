@@ -1,7 +1,7 @@
 // PaymentModal.tsx
 import React, { useState, useEffect } from 'react';
 import './PaymentModal.css';
-import { putPaymentExpense, postChargerWallet } from '../../ApiRepository/ApiRepository';
+import { putPaymentExpense, postChargerWallet, putPaymentFine } from '../../ApiRepository/ApiRepository';
 
 interface PaymentData {
   cardNumber: string;
@@ -24,10 +24,12 @@ interface PaymentModalProps {
   onClose: (currentStep: number) => void;
   product: ProductInfo;
   toClp: (number: number) => string;
-  typeModal: 'payment' | 'wallet';
+  typeModal: 'payment' | 'wallet' | 'paymentFine';
 }
 
 const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, toClp, typeModal }) => {
+  const userStr = sessionStorage.getItem('user');
+  const userSession = userStr ? JSON.parse(userStr) : null;
   const [currentStep, setCurrentStep] = useState<PaymentStep>(1);
   const [paymentData, setPaymentData] = useState<PaymentData>({
     cardNumber: '',
@@ -35,7 +37,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
     cvv: '',
     cardName: ''
   });
-  const [ walletSaldo ] = useState<number>(200000);
+  const [ walletSaldo ] = useState<number>(userSession ? userSession.saldoBilletera : 0);
 
   // Reset modal state when opened
   useEffect(() => {
@@ -106,7 +108,26 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, product, t
     // Show processing step
       setCurrentStep(3);
       putPaymentExpense(product.idCommonExpense, 'Pagado')
-        .then(() => {
+        .then((response) => {
+          userSession.saldoBilletera = response.data.saldoBilletera;
+          sessionStorage.setItem('user', JSON.stringify(userSession));
+          setCurrentStep(4);
+        })
+        .catch(error => {
+          console.error('Error al procesar el pago:', error);
+          alert('Error al procesar el pago. Inténtalo de nuevo más tarde.');
+          setCurrentStep(1);
+        });
+    }
+
+    if (typeModal === 'paymentFine') {
+      
+    // Show processing step
+      setCurrentStep(3);
+      putPaymentFine(product.idCommonExpense, 'Pagado')
+        .then((response) => {
+          userSession.saldoBilletera = response.data.saldoBilletera;
+          sessionStorage.setItem('user', JSON.stringify(userSession));
           setCurrentStep(4);
         })
         .catch(error => {
