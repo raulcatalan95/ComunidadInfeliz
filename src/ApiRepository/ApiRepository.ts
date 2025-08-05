@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const baseApi: string = 'https://angelic-appreciation-production.up.railway.app/api/v1';
-const baseApi: string = 'http://localhost:8080/api/v1';
+const baseApi: string = 'https://angelic-appreciation-production.up.railway.app/api/v1';
+// const baseApi: string = 'http://localhost:8080/api/v1';
 
 export const authUser = (rut: string, clave: string): Promise<any> => {
   return axios.post(`${baseApi}/usuario/autenticar`, {
